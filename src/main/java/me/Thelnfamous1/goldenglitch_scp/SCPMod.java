@@ -3,6 +3,9 @@ package me.Thelnfamous1.goldenglitch_scp;
 import me.Thelnfamous1.goldenglitch_scp.core.SCPBlocks;
 import me.Thelnfamous1.goldenglitch_scp.core.SCPCreativeModeTabs;
 import me.Thelnfamous1.goldenglitch_scp.core.SCPItems;
+import me.Thelnfamous1.goldenglitch_scp.items.SCP500;
+import net.neoforged.neoforge.common.EffectCure;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -27,6 +30,7 @@ public class SCPMod
     public static final String MODID = "goldenglitch_scp";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static EffectCure SCP_500_CURE;
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
@@ -54,14 +58,30 @@ public class SCPMod
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
+    public static EffectCure getScp500Cure() {
+        if(SCP_500_CURE == null){
+            throw new IllegalStateException("SCP-500 Cure was accessed too early!");
+        }
+        return SCP_500_CURE;
+    }
+
     private void commonSetup(final FMLCommonSetupEvent event)
     {
+        SCP_500_CURE = EffectCure.get("scp_500");
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
+    }
+
+    @SubscribeEvent
+    public void onEffectAdded(MobEffectEvent.Added event)
+    {
+        if(event.getEffectInstance() != null && SCP500.isEffectCuredBySCP500(event.getEffectInstance())){
+            event.getEffectInstance().getCures().add(getScp500Cure());
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

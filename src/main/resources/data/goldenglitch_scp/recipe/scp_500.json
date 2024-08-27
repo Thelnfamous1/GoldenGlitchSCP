@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "scp",
+  "key": {
+    "B": {
+      "item": "minecraft:gold_block"
+    },
+    "M": {
+      "item": "minecraft:glistering_melon_slice"
+    },
+    "A": {
+      "item": "minecraft:golden_apple"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "BMB",
+    "ANA",
+    "ERE"
+  ],
+  "result": {
+    "count": 1,
+    "id": "goldenglitch_scp:scp_500"
+  }
+}
