@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "me.Thelnfamous1.goldenglitch_scp.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "goldenglitch_scp.refmap.json",
+  "minVersion": "0.8",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "ZombieVillagerAccessor"
+  ],
+  "client": [
+  ]
+}
