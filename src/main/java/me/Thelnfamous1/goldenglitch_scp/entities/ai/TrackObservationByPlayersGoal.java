@@ -7,6 +7,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class TrackObservationByPlayersGoal<T extends Mob & ObservationTracking> extends Goal {
@@ -58,6 +60,17 @@ public class TrackObservationByPlayersGoal<T extends Mob & ObservationTracking> 
         // if the dot product is greater than 0, the mob is in front of the player
         // if the dot product is 0, the mob is directly to the side of the player
         // if the dot product is less than 0, the mob is behind the player
-        return dotProduct > 0 && player.hasLineOfSight(this.mob);
+        return dotProduct > 0 && this.hasLineOfSight(player);
+    }
+
+    protected boolean hasLineOfSight(Player player) {
+        // can't use LivingEntity#hasLineOfSight because it enforces a distance limit of 128 blocks
+        if (this.mob.level() != player.level()) {
+            return false;
+        } else {
+            Vec3 from = player.getEyePosition();
+            Vec3 to = this.mob.getEyePosition();
+            return player.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType() == HitResult.Type.MISS;
+        }
     }
 }
