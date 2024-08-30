@@ -1,5 +1,6 @@
 {
   "itemGroup.goldenglitch_scp": "Golden Glitch's SCP",
   "item.goldenglitch_scp.scp_500": "SCP-500",
-  "entity.goldenglitch_scp.scp_173": "SCP-173"
+  "entity.goldenglitch_scp.scp_173": "SCP-173",
+  "item.goldenglitch_scp.scp_173_spawn_egg": "SCP-173 Spawn Egg"
 }

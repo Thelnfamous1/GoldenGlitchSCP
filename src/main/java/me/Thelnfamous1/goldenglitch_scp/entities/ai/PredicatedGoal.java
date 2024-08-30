@@ -15,8 +15,8 @@ public class PredicatedGoal<T extends Mob> extends Goal {
     protected final boolean checkWhileRunningAlso;
 
     public PredicatedGoal(Goal goal, T mob, Predicate<T> predicate, boolean checkWhileRunningAlso){
-        this.wrappedGoal = goal;this.mob = mob;
-
+        this.wrappedGoal = goal;
+        this.mob = mob;
         this.predicate = predicate;
         this.checkWhileRunningAlso = checkWhileRunningAlso;
     }

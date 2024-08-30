@@ -12,12 +12,14 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class SCPCreativeModeTabs {
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, SCPMod.MODID);
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("scp", () -> CreativeModeTab.builder()
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SCP = CREATIVE_MODE_TABS.register("scp", () -> CreativeModeTab.builder()
             .title(Component.translatable(String.format("itemGroup.%s", SCPMod.MODID))) //The language key for the title of your CreativeModeTab
             .withTabsBefore(CreativeModeTabs.TOOLS_AND_UTILITIES)
             .icon(() -> SCPItems.SCP_500.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
-                output.accept(SCPItems.SCP_500.get()); // Add the items to the tab. For your own tabs, this method is preferred over the event
+                // Add the items to the tab. For your own tabs, this method is preferred over the event
+                output.accept(SCPItems.SCP_500.get());
+                output.accept(SCPItems.SCP_173_SPAWN_EGG.get());
             }).build());
 
     // Add the example block item to the building blocks tab

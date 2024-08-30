@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -32,7 +34,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class SCP173 extends Monster implements GeoEntity, ObservationTracking {
     protected static final EntityDataAccessor<Boolean> DATA_OBSERVED = SynchedEntityData.defineId(SCP173.class, EntityDataSerializers.BOOLEAN);
     private static final double SPEED_MODIFIER_ATTACKING = 5.0D;
-    private static final double SPEED_MODIFIER_WANDERING = 1.0;
+    private static final double SPEED_MODIFIER_WANDERING = 1.0D;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public SCP173(EntityType<? extends SCP173> pEntityType, Level pLevel) {
@@ -69,7 +71,7 @@ public class SCP173 extends Monster implements GeoEntity, ObservationTracking {
     @Nullable
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData) {
-        this.setInvulnerable(true); // SCP-173 should always be invulnerable unless summoned specifically as not invulnerable via a commnand
+        this.setInvulnerable(true); // SCP-173 should always be invulnerable unless summoned specifically as not invulnerable via a command
         return super.finalizeSpawn(pLevel, pDifficulty, pSpawnType, pSpawnGroupData);
     }
 
@@ -85,6 +87,16 @@ public class SCP173 extends Monster implements GeoEntity, ObservationTracking {
     @Override
     protected boolean canRide(Entity pVehicle) {
         return false;
+    }
+
+    @Override
+    public void checkDespawn() {
+        if (EventHooks.checkMobDespawn(this)) return;
+        if (this.level().getDifficulty() == Difficulty.PEACEFUL && this.shouldDespawnInPeaceful()) {
+            this.discard();
+        } else {
+            this.noActionTime = 0;
+        }
     }
 
     @Override
