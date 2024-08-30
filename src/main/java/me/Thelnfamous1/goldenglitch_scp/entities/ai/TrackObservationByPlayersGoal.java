@@ -1,8 +1,10 @@
 package me.Thelnfamous1.goldenglitch_scp.entities.ai;
 
 import me.Thelnfamous1.goldenglitch_scp.entities.ObservationTracking;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -30,14 +32,23 @@ public class TrackObservationByPlayersGoal<T extends Mob & ObservationTracking> 
     @Override
     public void tick() {
         boolean seen = false;
+        double followRangeSqr = Mth.square(this.getFollowRange());
         for(Player player : this.mob.level().players()){
-            if(EntitySelector.NO_SPECTATORS.test(player) && this.isVisibleBy(player)){
-                seen = true;
-                break;
+            if(EntitySelector.NO_SPECTATORS.test(player)){
+                if(this.mob.distanceToSqr(player) <= followRangeSqr){
+                    this.mob.notifyDetectablePlayer(player);
+                }
+                if(this.isVisibleBy(player)){
+                    seen = true;
+                }
             }
         }
         this.mob.setIsObserved(seen);
         this.cooldown = this.adjustedTickDelay(this.cooldownDuration);
+    }
+
+    protected double getFollowRange() {
+        return this.mob.getAttributeValue(Attributes.FOLLOW_RANGE);
     }
 
     protected boolean isVisibleBy(Player player) {

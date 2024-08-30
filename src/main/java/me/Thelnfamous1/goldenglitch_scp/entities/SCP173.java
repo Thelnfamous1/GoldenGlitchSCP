@@ -137,4 +137,8 @@ public class SCP173 extends Monster implements GeoEntity, ObservationTracking {
     public void setIsObserved(boolean observed) {
         this.entityData.set(DATA_OBSERVED, observed);
     }
+
+    @Override
+    public void notifyDetectablePlayer(Player player) {
+    }
 }
