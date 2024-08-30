@@ -2,6 +2,7 @@ package me.Thelnfamous1.goldenglitch_scp;
 
 import me.Thelnfamous1.goldenglitch_scp.core.SCPBlocks;
 import me.Thelnfamous1.goldenglitch_scp.core.SCPCreativeModeTabs;
+import me.Thelnfamous1.goldenglitch_scp.core.SCPEntities;
 import me.Thelnfamous1.goldenglitch_scp.core.SCPItems;
 import me.Thelnfamous1.goldenglitch_scp.items.SCP500;
 import net.neoforged.neoforge.common.EffectCure;
@@ -29,7 +30,7 @@ public class SCPMod
     // Define mod id in a common place for everything to reference
     public static final String MODID = "goldenglitch_scp";
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
     private static EffectCure SCP_500_CURE;
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
@@ -45,6 +46,8 @@ public class SCPMod
         SCPItems.ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         SCPCreativeModeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+        // Register the Deferred Register to the mod event bus so entity types get registered
+        SCPEntities.ENTITY_TYPES.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
