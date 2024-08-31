@@ -1,5 +1,6 @@
 package me.Thelnfamous1.goldenglitch_scp.entities;
 
+import me.Thelnfamous1.goldenglitch_scp.core.SCPTags;
 import me.Thelnfamous1.goldenglitch_scp.entities.ai.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
@@ -24,6 +24,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.event.EventHooks;
 import org.jetbrains.annotations.Nullable;
@@ -60,12 +61,16 @@ public class SCP173 extends Monster implements GeoEntity, ObservationTracking {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new TrackObservationByPlayersGoal<>(this, 0));
+        this.goalSelector.addGoal(0, new TrackObservationByPlayersGoal<>(this, SCP173::isSeeThroughBlock));
         this.goalSelector.addGoal(0, new FreezeWhenObservedGoal<>(this));
         this.goalSelector.addGoal(1, PredicatedGoal.runIf(new InteractWithDoorGoal<>(this, true, false, false), this, SCP173::isUnobserved, true));
         this.goalSelector.addGoal(2, PredicatedGoal.runIf(new MeleeAttackGoal(this, SPEED_MODIFIER_ATTACKING, true), this, SCP173::isUnobserved, true));
         this.goalSelector.addGoal(3, PredicatedGoal.runIf(new WaterAvoidingRandomStrollGoal(this, SPEED_MODIFIER_WANDERING, 0.0F), this, SCP173::isUnobserved, true));
-        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(this, Player.class, false));
+        this.targetSelector.addGoal(0, new AdjustableNearestAttackableTargetGoal<>(this, Player.class, false).ignoreLineOfSight());
+    }
+
+    public static boolean isSeeThroughBlock(BlockState state) {
+        return state.is(SCPTags.Blocks.SEE_THROUGH_BLOCKS);
     }
 
     @Override

@@ -8,17 +8,35 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.function.Predicate;
+
 public class TrackObservationByPlayersGoal<T extends Mob & ObservationTracking> extends Goal {
     protected final T mob;
-    private final int cooldownDuration;
-    private int cooldown = 0;
+    protected final int cooldownDuration;
+    protected int cooldown = 0;
+    protected final Predicate<BlockState> seeThroughBlocks;
+
+    public TrackObservationByPlayersGoal(T mob){
+        this(mob, 0);
+    }
 
     public TrackObservationByPlayersGoal(T mob, int cooldownDuration){
+        this(mob, cooldownDuration, state -> false);
+    }
+
+    public TrackObservationByPlayersGoal(T mob, Predicate<BlockState> seeThroughBlocks){
+        this(mob, 0, seeThroughBlocks);
+    }
+
+    public TrackObservationByPlayersGoal(T mob, int cooldownDuration, Predicate<BlockState> seeThroughBlocks){
         this.mob = mob;
         this.cooldownDuration = cooldownDuration;
+        this.seeThroughBlocks = seeThroughBlocks;
     }
 
     @Override
@@ -70,7 +88,8 @@ public class TrackObservationByPlayersGoal<T extends Mob & ObservationTracking> 
         } else {
             Vec3 from = player.getEyePosition();
             Vec3 to = this.mob.getEyePosition();
-            return player.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player)).getType() == HitResult.Type.MISS;
+            BlockHitResult clipResult = player.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+            return clipResult.getType() == HitResult.Type.MISS || this.seeThroughBlocks.test(player.level().getBlockState(clipResult.getBlockPos()));
         }
     }
 }
